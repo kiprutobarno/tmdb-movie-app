@@ -20,26 +20,52 @@ async function getMovies(url) {
   showMovies(data.results);
 }
 
+function createContentComponent(path, title, vote, overview) {
+  var classes = ["movie-info", "overview"];
+
+  var movieEl = document.createElement("div");
+  movieEl.classList.add("movie");
+
+  var imgEl = document.createElement("img");
+  imgEl.src = `${IMGPATH}${path}`;
+  imgEl.alt = `${title}`;
+
+  classes.forEach((c) => {
+    var div = document.createElement("div");
+    div.className = c;
+    switch (div.getAttribute("class")) {
+      case "movie-info": {
+        var subject = document.createElement("h3");
+        subject.innerText = `${title}"`;
+        var rating = document.createElement("span");
+        rating.classList.add(`${getClassByRate(vote)}`);
+        rating.innerText = `${vote}`;
+        div.append(subject, rating);
+        break;
+      }
+
+      case "overview": {
+        var d = document.createElement("div");
+        d.innerText = `${overview}`;
+        div.appendChild(d);
+        break;
+      }
+      default:
+        break;
+    }
+
+    movieEl.append(imgEl, div);
+  });
+
+  main.append(movieEl);
+}
+
 function showMovies(movies) {
   main.innerHTML = "";
 
   movies.forEach((movie) => {
     const { poster_path, title, overview, vote_average } = movie;
-    const movieEl = document.createElement("div");
-    movieEl.classList.add("movie");
-    movieEl.innerHTML = `
-            <img src="${IMGPATH}${poster_path}" alt="${title}"/>
-            <div class="movie-info">
-                <h3>${title}</h3>
-                <span class="${getClassByRate(
-                  vote_average
-                )}">${vote_average}</span>
-            </div>
-            <div class="overview">
-                    <h3>Overview:</h3>${overview}
-            </div>
-        `;
-    main.appendChild(movieEl);
+    createContentComponent(poster_path, title, vote_average, overview);
   });
 }
 
