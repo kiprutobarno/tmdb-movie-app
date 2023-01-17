@@ -24,6 +24,11 @@ function createContentComponent(path, title, vote, overview) {
   var classes = ["movie-info", "overview"];
 
   var movieEl = document.createElement("div");
+  var overviewEl = document.createElement("div");
+  var ratingEl = document.createElement("span");
+  var titleEl = document.createElement("h3");
+  var movieInfoEl = document.createElement("div");
+
   movieEl.classList.add("movie");
 
   var imgEl = document.createElement("img");
@@ -31,30 +36,20 @@ function createContentComponent(path, title, vote, overview) {
   imgEl.alt = `${title}`;
 
   classes.forEach((c) => {
-    var div = document.createElement("div");
-    div.className = c;
-    switch (div.getAttribute("class")) {
-      case "movie-info": {
-        var subject = document.createElement("h3");
-        subject.innerText = `${title}"`;
-        var rating = document.createElement("span");
-        rating.classList.add(`${getClassByRate(vote)}`);
-        rating.innerText = `${vote}`;
-        div.append(subject, rating);
-        break;
-      }
+    movieInfoEl.className = c;
 
-      case "overview": {
-        var d = document.createElement("div");
-        d.innerText = `${overview}`;
-        div.appendChild(d);
-        break;
-      }
-      default:
-        break;
+    if (movieInfoEl.getAttribute("class") === "movie-info") {
+      titleEl.innerText = `${title}"`;
+      ratingEl.classList.add(`${getClassByRate(vote)}`);
+      ratingEl.innerText = `${vote}`;
+      movieInfoEl.append(titleEl, ratingEl);
+    } else {
+      overviewEl.innerText = `${overview}`;
+      movieInfoEl.appendChild(overviewEl);
     }
 
-    movieEl.append(imgEl, div);
+    movieEl.append(imgEl, movieInfoEl);
+    
   });
 
   main.append(movieEl);
@@ -70,13 +65,7 @@ function showMovies(movies) {
 }
 
 function getClassByRate(vote) {
-  if (vote >= 8) {
-    return "green";
-  } else if (vote >= 5) {
-    return "orange";
-  } else {
-    return "red";
-  }
+  return vote >= 8 ? "green" : vote >= 5 ? "orange" : "red";
 }
 
 form.addEventListener("submit", (e) => {
